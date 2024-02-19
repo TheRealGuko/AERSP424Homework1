@@ -41,7 +41,7 @@ public:
         pos = 0;
         vel = 0;
         at_SCE = 0;
-        
+        cout << "Plane created at " <<this << endl;
     }
 
     ~Plane() {
