@@ -2,7 +2,95 @@
 #include <iomanip>
 #include <vector>
 #include <string>
+#include <map>
 using namespace std;
+
+
+//Question 3
+class Plane {
+private:
+    float pos;
+    float vel;
+    float distance;
+    bool at_SCE;
+    std::string origin;
+    std::string destination;
+    std::map<std::pair<std::string, std::string>, int> flightDistances;
+
+public:
+    Plane(const std::string& from, const std::string& to) 
+    {
+        origin = from;
+        destination = to;
+        if (origin == "SCE" and destination == "PHL" or origin == "PHL" and destination == "SCE")
+        {
+            distance = flightDistances[{"SCE", "PHL"}];
+        }
+        else if (origin == "SCE" and destination == "ORD" or origin == "ORD" and destination == "SCE")
+        {
+            distance = flightDistances[{"SCE", "ORD"}];
+        }
+        else if (origin == "SCE" and destination == "EWR" or origin == "EWR" and destination == "SCE")
+        {
+            distance = flightDistances[{"SCE", "EWR"}];
+        }
+        else
+        {
+            cout << "Not a valid input" << endl;
+        }
+        pos = 0;
+        vel = 0;
+        at_SCE = 0;
+        
+    }
+
+    ~Plane() {
+        cout << "Plane Destroyed.";
+    }
+
+    void operate(float dt) {
+        if (pos < distance)
+        {
+            pos += vel * dt;
+            at_SCE = 0;
+        }
+        else if(destination == "SCE")
+        {
+            at_SCE = 1;
+        }
+        else
+        {
+            std::string temp = origin;
+            origin = destination;
+            destination = temp;
+            pos = 0.0;
+        }
+    }
+
+    float getPos() {
+        return pos;
+    }
+ 
+    std::string getOrigin() {
+        return origin;
+    }
+ 
+    std::string getDestination() {
+        return destination;
+    }
+
+    bool isAtSCE() {
+        return at_SCE;
+    }
+
+    float getVel() {
+        return vel;
+    }
+
+    void setVel(float velocity) {
+        vel = velocity;
+    }
+};
 
 
 int main() {
@@ -99,4 +187,14 @@ int main() {
     }
 
     /*The following is Question 2 for the homework*/
+    std::map<std::pair<std::string, std::string>, int> flightDistances;
+
+    // Set the container with flight distances
+    flightDistances[{"SCE", "PHL"}] = 160;
+    flightDistances[{"SCE", "ORD"}] = 640;
+    flightDistances[{"SCE", "EWR"}] = 220;
+
+    /*Question 4*/
+    //Plane obj;
+    //cout << "Plane created at " + &obj << endl;
 }
