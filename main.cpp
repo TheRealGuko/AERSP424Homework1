@@ -22,15 +22,15 @@ public:
     {
         origin = from;
         destination = to;
-        if (origin == "SCE" and destination == "PHL" or origin == "PHL" and destination == "SCE")
+        if (origin == "SCE" && destination == "PHL" || origin == "PHL" && destination == "SCE")
         {
             distance = flightDistances[{"SCE", "PHL"}];
         }
-        else if (origin == "SCE" and destination == "ORD" or origin == "ORD" and destination == "SCE")
+        else if (origin == "SCE" && destination == "ORD" || origin == "ORD" && destination == "SCE")
         {
             distance = flightDistances[{"SCE", "ORD"}];
         }
-        else if (origin == "SCE" and destination == "EWR" or origin == "EWR" and destination == "SCE")
+        else if (origin == "SCE" && destination == "EWR" || origin == "EWR" && destination == "SCE")
         {
             distance = flightDistances[{"SCE", "EWR"}];
         }
@@ -194,7 +194,30 @@ int main() {
     flightDistances[{"SCE", "ORD"}] = 640;
     flightDistances[{"SCE", "EWR"}] = 220;
 
-    /*Question 4*/
-    //Plane obj;
-    //cout << "Plane created at " + &obj << endl;
+    /*Question 5*/
+    float placeHolder = 0;
+    std::string from;
+    std::string to;
+    cout << "Please enter a starting airport: (SCE,EWR, PHL, or ORL) ";
+    cin >> from;
+    cout << "Please enter a destination airport: (SCE,EWR, PHL, or ORL) ";
+    cin >> to;
+    Plane plane(from, to);
+
+    cout << "Please enter a flight speed: (mph) ";
+    cin >> placeHolder;
+    
+    plane.setVel(placeHolder);
+
+    float timestep = 10;
+    float iterations = 1000;
+    float position;
+    int time = 0;
+    for (int i = 0; i < iterations; ++i) {
+        plane.operate(timestep);
+        position = plane.getPos();
+        time += timestep;
+        cout << "Time: " << time << " seconds, Position: " << position << " miles." << endl;
+    }
+
 }
