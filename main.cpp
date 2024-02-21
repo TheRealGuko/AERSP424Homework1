@@ -18,21 +18,24 @@ private:
     std::map<std::pair<std::string, std::string>, int> flightDistances;
 
 public:
-    Plane(const std::string& from, const std::string& to) 
+    Plane(const std::string from, const std::string to, std::map<std::pair<std::string, std::string>, int> flightDistances)
     {
         origin = from;
         destination = to;
         if (origin == "SCE" && destination == "PHL" || origin == "PHL" && destination == "SCE")
         {
             distance = flightDistances[{"SCE", "PHL"}];
+            cout << "The total trip miles is " << distance << endl;
         }
         else if (origin == "SCE" && destination == "ORD" || origin == "ORD" && destination == "SCE")
         {
             distance = flightDistances[{"SCE", "ORD"}];
+            cout << "The total trip miles is " << distance << endl;
         }
         else if (origin == "SCE" && destination == "EWR" || origin == "EWR" && destination == "SCE")
         {
             distance = flightDistances[{"SCE", "EWR"}];
+            cout << "The total trip miles is " << distance << endl;
         }
         else
         {
@@ -54,16 +57,19 @@ public:
             pos += vel * dt;
             at_SCE = 0;
         }
-        else if(destination == "SCE")
-        {
-            at_SCE = 1;
-        }
         else
         {
-            std::string temp = origin;
-            origin = destination;
-            destination = temp;
-            pos = 0.0;
+            if (destination == "SCE")
+            {
+                at_SCE = 1;
+            }
+            else
+            {
+                std::string temp = origin;
+                origin = destination;
+                destination = temp;
+                pos = 0.0;
+            }   
         }
     }
 
@@ -79,6 +85,11 @@ public:
         return destination;
     }
 
+    float getDistance()
+    {  
+        return distance;
+    }
+
     bool isAtSCE() {
         return at_SCE;
     }
@@ -91,6 +102,7 @@ public:
         vel = velocity;
     }
 };
+
 
 
 int main() {
@@ -186,6 +198,8 @@ int main() {
         cout << "C.G. location (inches): " << fixed << setprecision(2) << totalMoment / totalWeight << endl;
     }
 
+
+
     /*The following is Question 2 for the homework*/
     std::map<std::pair<std::string, std::string>, int> flightDistances;
 
@@ -194,30 +208,41 @@ int main() {
     flightDistances[{"SCE", "ORD"}] = 640;
     flightDistances[{"SCE", "EWR"}] = 220;
 
+
+
     /*Question 5*/
     float placeHolder = 0;
     std::string from;
     std::string to;
-    cout << "Please enter a starting airport: (SCE,EWR, PHL, or ORL) ";
+    cout << "Please enter a starting airport(SCE, EWR, PHL, or ORD):  ";
     cin >> from;
-    cout << "Please enter a destination airport: (SCE,EWR, PHL, or ORL) ";
+    cout << "Please enter a destination airport(SCE, EWR, PHL, or ORD): ";
     cin >> to;
-    Plane plane(from, to);
+    Plane plane(from, to, flightDistances);
 
     cout << "Please enter a flight speed: (mph) ";
     cin >> placeHolder;
+    placeHolder = placeHolder / 3600;
     
     plane.setVel(placeHolder);
 
     float timestep = 10;
     float iterations = 1000;
-    float position;
+    float position = 0.0;
     int time = 0;
+    float distance = plane.getDistance();
     for (int i = 0; i < iterations; ++i) {
-        plane.operate(timestep);
-        position = plane.getPos();
-        time += timestep;
-        cout << "Time: " << time << " seconds, Position: " << position << " miles." << endl;
+        if (distance-position>0)
+        {
+            plane.operate(timestep);
+            position = plane.getPos();
+            time += timestep;
+            cout << "Time: " << time << " seconds, Position: " << position << " miles." << endl;
+        }
+        else
+        {
+            break;
+        }
     }
 
 }
