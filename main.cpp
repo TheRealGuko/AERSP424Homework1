@@ -103,7 +103,27 @@ public:
     }
 };
 
+//Question 6
+class Pilot {
+private:
+    std::string name;
+    Plane* myPlane;
+public:
+    Pilot(const std::string& _name, Plane* _plane) : name(_name), myPlane(_plane) 
+    {
+        std::cout << name << " is at the gate, ready to board the plane." << std::endl;
+        std::cout << "Memory address: " << this << std::endl;
+    }
 
+    ~Pilot()
+    {
+        std::cout << name << " is out of the plane." << std::endl;
+    }
+    std::string getName() const 
+    {
+        return name;
+    }
+};
 
 int main() {
 
