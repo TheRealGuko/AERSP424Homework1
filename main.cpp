@@ -112,38 +112,7 @@ public:
     }
 };
 
-/*Question 6*/
-class Pilot {
-private:
-    std::string name;
-    Plane* myPlane;
-public:
-    Pilot(const std::string& _name, Plane* _myPlane)
-    {
-        cout << "Pilot " << _name << " with certificate number " << this << " is at the gate, ready to board plane " << &_myPlane << "." << endl;
-        name = _name;
-        myPlane = _myPlane;
-    }
-    
-    ~Pilot()
-    {
-        std::cout << name << " is out of the plane." << std::endl;
-    }
-    std::string getName() const 
-    {
-        return name;
-    }
-};
 
-    ~Pilot()
-    {
-        cout << name << " is out of the plane." << endl;
-    }
-    std::string getName() const
-    {
-        return name;
-    }
-};
 
 int main() {
 
@@ -285,8 +254,234 @@ int main() {
             break;
         }
     }*/
+/*--------------------------------------------------------------Question 6/7--------------------------------------------------------------------*/
+class Plane;
 
-    std::string from;
+class Pilot
+{
+Private:
+	std::string name;
+	Plane* myPlane; 
+
+Public:
+	Pilot(const std::string& pilotName, Plane* planePtr)
+		name = pilotName;
+        myPlane = planePtr;
+// Prints out "Pilot ___ is at the gate, ready to board the plane. Memory Address: ____"
+		{
+			std::cout << "Pilot" << name << " is at the gate, ready to board the plane. Memory Address: " << myPlane << std::endl;
+		}
+// Prints out "Pilot ____ is out of the plane."
+		~Pilot()
+		{
+			std::cout << "Pilot" << name << " is out of the plane." << std::endl;
+		}
+// getter for name of specific pilot
+		std::string getName() const
+		{
+			return name;
+		}
+// function to control the plane
+		void controlPlane(double timestep, int maxIterations);
+};
+
+class Plane
+{
+private:
+	double pos;
+	double vel;
+	double distance;
+	std::string origin;
+	std::string destination;
+
+public:
+	Plane(const std::string& from, const std::string& to, double planeSpeed)
+    {   
+        pos = 0;
+        vel = planeSpeed;
+        distance = 0;
+        origin = from;
+        destination = to;
+    }
+// getter for position
+	double getPos() const
+	{
+		return pos;
+	}
+
+	void operate(double dt)
+	{
+		pos += vel * dt;
+
+		if (pos <= 0)
+		{
+			pos = 0
+		}
+
+		if (pos == 0)
+		{
+			std::cout << "Plane landed at SCE. Memory address: " << this << std::endl;
+		}
+	}
+};
+
+void Pilot::controlPlane(double timestep, int maxIterations)
+{
+	for (int i = 0, i < maxIterations; ++i)
+	{
+		std::cout << "Pilot " << name << " controlling the plane at memory address: " << myPlane << std::endl;
+		myPlane->operate(timestep);
+
+		if (myPlane->getPos() == 0)
+		{
+			break;
+		}
+	}
+}
+
+int main()
+{
+	Plane plane = ("SCE", "PHL", 450);
+
+	std::shared_ptr<Pilot> pilot1 = std::make_shared<Pilot>("Pilot-in-Command", &plane);
+	std::shared_ptr<Pilot> pilot2 = std::make_shared<Pilot>("Co-Pilot", &plane);
+
+	double timestep = 50;
+	int maxIterations = 10; // should be 1000 as in question 5, reduced for easier/smoother tests of code
+
+	while (true) {
+		pilot1->controlPlane(timestep, maxIterations);
+		std::cout << "Plane is at SCE" << std::endl;
+
+		pilot2->controlPlane(timestep, maxIterations);
+		std::cout << "Plane is at SCE" << std::endl;
+
+		plane = std::make_shared<Plane>("SCE", "PHL", 450);
+
+		std::swap(pilot1, pilot2);
+
+	}
+
+	return 0;
+}
+
+/*-------------------------------------------------------------------Question 8-----------------------------------------------------------------*/
+class Plane;
+
+class Pilot
+{
+Private:
+	std::string name;
+	std::shared_ptr<Plane> myPlane; 
+
+Public:
+	Pilot(const std::string& pilotName, std::shared_ptr<Plane> planePtr)
+		name = pilotName;
+        myPlane = planePtr;
+// Prints out "Pilot ___ is at the gate, ready to board the plane. Memory Address: ____"
+		{
+			std::cout << "Pilot" << name << " is at the gate, ready to board the plane. Memory Address: " << planePtr << std::endl;
+		}
+// Prints out "Pilot ____ is out of the plane."
+		~Pilot()
+		{
+			std::cout << "Pilot" << name << " is out of the plane." << std::endl;
+		}
+
+		std::string getName() const
+		{
+			return name;
+		}
+
+		void controlPlane(double timestep, int maxIterations);
+};
+
+class Plane
+{
+private:
+	double pos;
+	double vel;
+	double distance;
+	std::string origin;
+	std::string destination;
+
+public:
+	Plane(const std::string& from, const std::string& to, double planeSpeed)
+    {   
+        pos = 0;
+        vel = planeSpeed;
+        distance = 0;
+        origin = from;
+        destination = to;
+    }
+
+	~Plane()
+	{}
+
+	double getPos() const
+	{
+		return pos;
+	}
+
+	void operate(double dt)
+	{
+		pos += vel * dt;
+
+		if (pos <= 0)
+		{
+			pos = 0
+		}
+
+		if (pos == 0)
+		{
+			std::cout << "Plane landed at SCE. Memory address: " << this << std::endl;
+		}
+	}
+};
+
+void Pilot::controlPlane(double timestep, int maxIterations)
+{
+	for (int i = 0, i < maxIterations; ++i)
+	{
+		std::cout << "Pilot " << name << " controlling the plane at memory address: " << myPlane.get() << std::endl;
+		myPlane->operate(timestep);
+
+		if (myPlane->getPos() == 0)
+		{
+			break;
+		}
+	}
+}
+
+int main()
+{
+	auto plane = std::make_shared<Plane>("SCE", "PHL", 450);
+
+	auto pilot1 = std::make_shared<Pilot>("Pilot-in-Command", plane);
+	auto pilot2 = std::make_shared<Pilot>("Co-Pilot", plane);
+
+	double timestep = 50;
+	int maxIterations = 10; // should be 1000 as in question 5, reduced for easier/smoother tests of code
+
+
+	while (true) {
+		pilot1->controlPlane(timestep, maxIterations);
+		std::cout << "Plane is at SCE" << std::endl;
+
+		pilot2->controlPlane(timestep, maxIterations);
+		std::cout << "Plane is at SCE" << std::endl;
+
+		plane = std::make_shared<Plane>("SCE", "PHL", 450);
+
+		std::swap(pilot1m pilot2);
+
+	}
+
+	return 0;
+}
+
+    
+/*    std::string from;
     std::string to;
     cout << "Please enter a starting airport(SCE, EWR, PHL, or ORD):  ";
     cin >> from;
@@ -295,10 +490,10 @@ int main() {
     Plane plane2(from, to, flightDistances);
     
     std::string name1, name2;
-    cout << "What is the name of the captian: ";
+    cout << "What is the name of the captain: ";
     cin >> name1;
 
-    cout << "What is the name of the co-captian: ";
+    cout << "What is the name of the co-captain: ";
     cin >> name2;
 
     Pilot pilot1(name1, &plane2);
@@ -334,13 +529,13 @@ int main() {
 
         if (checkName == pilot1.getName())
         {
-            cout << name2 << " with certificate number " << &name2 << " has taken control of the plane " << &plane2  << "." << endl;
+            cout << "Pilot " << name2 << " with certificate number " << &name2 << " has taken control of the plane " << &plane2  << "." << endl;
             cout << "" << endl;
             checkName = pilot2.getName();
         }
         else
         {
-            cout << name1 << " with certificate number " << &name1 << " has taken control of the plane " << &plane2 << "." << endl;
+            cout << "Pilot " << name1 << " with certificate number " << &name1 << " has taken control of the plane " << &plane2 << "." << endl;
             cout << "" << endl;
             checkName = pilot1.getName();
         }
@@ -351,3 +546,4 @@ int main() {
         }
     }
 }
+*/
