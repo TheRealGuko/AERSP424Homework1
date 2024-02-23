@@ -3,19 +3,20 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <utility>
 using namespace std;
 
 
 //Question 3
 class Plane {
 private:
-    float pos;
-    float vel;
-    float distance;
+    double pos;
+    double vel;
+    double distance;
     bool at_SCE;
     std::string origin;
     std::string destination;
-    std::map<std::pair<std::string, std::string>, int> flightDistances;
+    //std::map<std::pair<std::string, std::string>, int> flightDistances;
 
 public:
     Plane(const std::string from, const std::string to, std::map<std::pair<std::string, std::string>, int> flightDistances)
@@ -43,7 +44,14 @@ public:
         }
         pos = 0;
         vel = 0;
-        at_SCE = 0;
+        if (to == "SCE")
+        {
+            at_SCE = 0;
+        }
+        else
+        {
+            at_SCE = 1;
+        }
         cout << "Plane created at " <<this << endl;
     }
 
@@ -51,7 +59,7 @@ public:
         cout << "Plane Destroyed.";
     }
 
-    void operate(float dt) {
+    void operate(double dt) {
         if (pos < distance)
         {
             pos += vel * dt;
@@ -62,18 +70,19 @@ public:
             if (destination == "SCE")
             {
                 at_SCE = 1;
+
+                swap(origin, destination);
+                pos = 0.0;
             }
             else
             {
-                std::string temp = origin;
-                origin = destination;
-                destination = temp;
+                swap(origin, destination);
                 pos = 0.0;
             }   
         }
     }
 
-    float getPos() {
+    double getPos() {
         return pos;
     }
  
@@ -85,7 +94,7 @@ public:
         return destination;
     }
 
-    float getDistance()
+    double getDistance()
     {  
         return distance;
     }
@@ -94,29 +103,51 @@ public:
         return at_SCE;
     }
 
-    float getVel() {
+    double getVel() {
         return vel;
     }
 
-    void setVel(float velocity) {
+    void setVel(double velocity) {
         vel = velocity;
     }
 };
 
+/*Question 6*/
+class Pilot {
+private:
+    std::string name;
+    Plane* myPlane;
+public:
+    Pilot(const std::string& _name, Plane* _myPlane)
+    {
+        cout << "Pilot " << _name << " with certificate number " << this << " is at the gate, ready to board plane " << &_myPlane << "." << endl;
+        name = _name;
+        myPlane = _myPlane;
+    }
+    
 
+    ~Pilot()
+    {
+        cout << name << " is out of the plane." << endl;
+    }
+    std::string getName() const
+    {
+        return name;
+    }
+};
 
 int main() {
 
-    /*The following is Question 1 for the homework*/
-    float planeEmptyWeight, usableFuelPerGallon, baggageWeight; //Pounds
+    /*The following is Question 1 for the homework
+    double planeEmptyWeight, usableFuelPerGallon, baggageWeight; //Pounds
     int numFrontSeatOcc, numRearSeatOcc; //No Unit
-    float planeWeightEmptyMoment; //Pounds-inches
-    float frontSeatMomentArm, rearSeatMomentArm, fuelMomentArm, baggageMomentArm; //Inches
-    float gallonUsableFuel; //Gallons
+    double planeWeightEmptyMoment; //Pounds-inches
+    double frontSeatMomentArm, rearSeatMomentArm, fuelMomentArm, baggageMomentArm; //Inches
+    double gallonUsableFuel; //Gallons
 
-    float maxGrossWeight = 2950;  //Pounds
-    float forwardCGLim = 82.1;  //Inches
-    float aftCGLLim = 84.7; //inches
+    double maxGrossWeight = 2950;  //Pounds
+    double forwardCGLim = 82.1;  //Inches
+    double aftCGLLim = 84.7; //inches
 
     cout << "Enter airplane empty weight (pounds): ";
     cin >> planeEmptyWeight;
@@ -126,8 +157,8 @@ int main() {
     cin >> numFrontSeatOcc;
 
     // Array to store weights of front seat occupants
-    vector<float> frontSeatWeights(numFrontSeatOcc);
-    float totalFrontWeight = 0;
+    vector<double> frontSeatWeights(numFrontSeatOcc);
+    double totalFrontWeight = 0;
     
     for (int i = 0; i < numFrontSeatOcc; ++i) {
         std::string iString = std::to_string(i+1);
@@ -142,8 +173,8 @@ int main() {
     cin >> numRearSeatOcc;
 
     // Array to store weights of rear seat occupants
-    vector<float> rearSeatWeights(numRearSeatOcc);
-    float totalRearWeight = 0;
+    vector<double> rearSeatWeights(numRearSeatOcc);
+    double totalRearWeight = 0;
     for (int i = 0; i < numRearSeatOcc; ++i) {
         std::string iString = std::to_string(i+1);
         cout << "Enter weight of each rear seat occupant " + iString + " (pounds): ";
@@ -164,12 +195,12 @@ int main() {
     cout << "Enter baggage moment arm (inches): ";
     cin >> baggageMomentArm;
 
-    float usableFuelWeight = gallonUsableFuel * usableFuelPerGallon;
+    double usableFuelWeight = gallonUsableFuel * usableFuelPerGallon;
 
 
-    float totalWeight = planeEmptyWeight + totalFrontWeight + totalRearWeight + usableFuelWeight + baggageWeight;
+    double totalWeight = planeEmptyWeight + totalFrontWeight + totalRearWeight + usableFuelWeight + baggageWeight;
 
-    float totalMoment = planeWeightEmptyMoment + totalFrontWeight * frontSeatMomentArm + totalRearWeight * rearSeatMomentArm
+    double totalMoment = planeWeightEmptyMoment + totalFrontWeight * frontSeatMomentArm + totalRearWeight * rearSeatMomentArm
         + usableFuelWeight * fuelMomentArm + baggageWeight * baggageMomentArm;
     
     cout << "\n";
@@ -196,7 +227,7 @@ int main() {
         cout << "The aircraft is within design limits.\n";
         cout << "Gross weight (pounds): " << fixed << setprecision(2) << totalWeight << endl;
         cout << "C.G. location (inches): " << fixed << setprecision(2) << totalMoment / totalWeight << endl;
-    }
+    }*/
 
 
 
@@ -210,8 +241,8 @@ int main() {
 
 
 
-    /*Question 5*/
-    float placeHolder = 0;
+    /*Question 5
+    
     std::string from;
     std::string to;
     cout << "Please enter a starting airport(SCE, EWR, PHL, or ORD):  ";
@@ -220,17 +251,18 @@ int main() {
     cin >> to;
     Plane plane(from, to, flightDistances);
 
+    double placeHolder = 0;
     cout << "Please enter a flight speed: (mph) ";
     cin >> placeHolder;
     placeHolder = placeHolder / 3600;
     
     plane.setVel(placeHolder);
 
-    float timestep = 10;
-    float iterations = 1000;
-    float position = 0.0;
+    double timestep = 10;
+    double iterations = 1000;
+    double position = 0.0;
     int time = 0;
-    float distance = plane.getDistance();
+    double distance = plane.getDistance();
     for (int i = 0; i < iterations; ++i) {
         if (distance-position>0)
         {
@@ -243,6 +275,70 @@ int main() {
         {
             break;
         }
-    }
+    }*/
 
+    std::string from;
+    std::string to;
+    cout << "Please enter a starting airport(SCE, EWR, PHL, or ORD):  ";
+    cin >> from;
+    cout << "Please enter a destination airport(SCE, EWR, PHL, or ORD): ";
+    cin >> to;
+    Plane plane2(from, to, flightDistances);
+    
+    std::string name1, name2;
+    cout << "What is the name of the captian: ";
+    cin >> name1;
+
+    cout << "What is the name of the co-captian: ";
+    cin >> name2;
+
+    Pilot pilot1(name1, &plane2);
+    Pilot pilot2(name2, &plane2);
+
+    int trips;
+    cout << "Please enter the number of trips the plane will be making: ";
+    cin >> trips;
+
+    cout << "" << endl;
+
+    int timestep = 10;
+    plane2.setVel(400);
+    
+    std::string checkName = name2;
+    for (int i = 0; i <= trips; ++i)
+    {
+        if (plane2.isAtSCE() == 1)
+        {
+            cout << "The plane " << &plane2 << " is at SCE." << endl;
+        }
+        else
+        {
+            if (to == "SCE")
+            {
+                cout << "The plane " << &plane2 << " is at " << from << "." << endl;
+            }
+            else
+            {
+                cout << "The plane " << &plane2 << " is at " << to << "." << endl;
+            }
+        }
+
+        if (checkName == pilot1.getName())
+        {
+            cout << name2 << " with certificate number " << &name2 << " has taken control of the plane " << &plane2  << "." << endl;
+            cout << "" << endl;
+            checkName = pilot2.getName();
+        }
+        else
+        {
+            cout << name1 << " with certificate number " << &name1 << " has taken control of the plane " << &plane2 << "." << endl;
+            cout << "" << endl;
+            checkName = pilot1.getName();
+        }
+
+        while (plane2.getDistance() >= plane2.getPos())
+        {
+            plane2.operate(timestep);
+        }
+    }
 }
