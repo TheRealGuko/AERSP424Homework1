@@ -125,6 +125,15 @@ public:
         myPlane = _myPlane;
     }
     
+    ~Pilot()
+    {
+        std::cout << name << " is out of the plane." << std::endl;
+    }
+    std::string getName() const 
+    {
+        return name;
+    }
+};
 
     ~Pilot()
     {
