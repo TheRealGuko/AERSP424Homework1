@@ -259,11 +259,11 @@ class Plane;
 
 class Pilot
 {
-Private:
+private:
 	std::string name;
 	Plane* myPlane; 
 
-Public:
+public:
 	Pilot(const std::string& pilotName, Plane* planePtr)
 		name = pilotName;
         myPlane = planePtr;
@@ -370,11 +370,11 @@ class Plane;
 
 class Pilot
 {
-Private:
+private:
 	std::string name;
 	std::shared_ptr<Plane> myPlane; 
 
-Public:
+public:
 	Pilot(const std::string& pilotName, std::shared_ptr<Plane> planePtr)
 		name = pilotName;
         myPlane = planePtr;
@@ -473,7 +473,7 @@ int main()
 
 		plane = std::make_shared<Plane>("SCE", "PHL", 450);
 
-		std::swap(pilot1m pilot2);
+		std::swap(pilot1, pilot2);
 
 	}
 
